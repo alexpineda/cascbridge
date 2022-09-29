@@ -13,7 +13,7 @@ An http file server and UI for `CASC` archive data.
 ```ts
 
 
-const animBuffer = await fetch("http://localhost:8080/anim/main000.anim").then(res => res.arrayBuffer());
+const animBuffer = await fetch("http://localhost:8080/anim/main_000.anim").then(res => res.arrayBuffer());
 
 
 ```
