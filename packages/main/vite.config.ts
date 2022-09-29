@@ -4,6 +4,9 @@ import pkg from '../../package.json'
 
 export default defineConfig({
   root: __dirname,
+  optimizeDeps: {
+    exclude: ["bw-casclib"]
+  },
   build: {
     outDir: '../../dist/main',
     emptyOutDir: true,

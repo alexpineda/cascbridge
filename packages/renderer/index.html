@@ -1,32 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-    <title>Vite App</title>
-    <style>
-      body {
-        padding-top: 24px;
-      }
-      .transparent-drag {
-        height: 24px;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 1;
-        cursor: pointer;
-        -webkit-app-region: drag;
-        background: linear-gradient(140deg, transparent, #6bd1fe, #bd34fe);
-        opacity: .4;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="transparent-drag"></div>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link ref="stylesheet" href="normalize.min.css" />
+  <link rel="stylesheet" href="open-props.min.css" />
+  <link rel="stylesheet" href="buttons.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Noto Sans Mono', monospace;
+    }
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+  <title>CASCBridge</title>
+</head>
+
+<body>
+  <div id="app">
+    <h1>CASCBridge</h1>
+    <div style="display: flex; flex-direction: column; gap: 1rem">
+      <div>
+        <label for="port">Port <input type="text" inputmode="numeric" id="port" value="8080" /></label>
+      </div>
+      <div>
+        <div><label>SCR Directory: <span id="directory"></span></label></div>
+        <button id="select-directory">Select Directory</button>
+      </div>
+      <div>
+        <button id="start-server">Start Server</button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/index.ts"></script>
+</body>
+
 </html>

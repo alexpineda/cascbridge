@@ -1,18 +1,11 @@
-// The built directory structure
-//
-// ├─┬ dist
-// │ ├─┬ main
-// │ │ └── index.cjs
-// │ ├─┬ preload
-// │ │ └── index.cjs
-// │ ├─┬ renderer
-// │ │ └── index.html
 process.env.DIST = join(__dirname, '..')
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
 import os from 'os'
 import { join } from 'path'
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain } from 'electron'
+import { opts, server } from "../server"
+import { store } from './store'
 
 const isWin7 = os.release().startsWith('6.1')
 if (isWin7) app.disableHardwareAcceleration()
@@ -26,24 +19,22 @@ let win: BrowserWindow | null = null
 
 async function createWindow() {
   win = new BrowserWindow({
-    title: 'Main window',
-    width: 900,
-    height: 700,
+    title: 'CASCBridge',
+    width: 400,
+    height: 400,
     webPreferences: {
       preload: join(process.env.DIST, 'preload/index.cjs'),
       contextIsolation: false,
       nodeIntegration: true,
     },
-    frame: false,
-    resizable: false,
-    transparent: true,
-    // https://github.com/electron/electron/issues/20357
-    backgroundColor: '#00000001',
+    resizable: true,
   })
 
-  // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', (new Date).toLocaleString())
+    win?.webContents.send('store-loaded', {
+      directory: store.get("directory", ""),
+      port: store.get("port", ""),
+    })
   })
 
   if (app.isPackaged) {
@@ -79,3 +70,44 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+
+
+const showOpenFolderDialog = (onOpen?: (filePaths: string[]) => void) =>
+  dialog
+    .showOpenDialog({
+      properties: ["openDirectory"],
+    })
+    .then(({ filePaths, canceled }) => {
+      if (canceled) return;
+      onOpen && onOpen(filePaths);
+      return filePaths;
+    })
+    .catch((err) => {
+      dialog.showMessageBox({
+        type: "error",
+        title: "Error Loading File",
+        message: "There was an error selecting path: " + err.message,
+      });
+    });
+
+ipcMain.on('select-directory', (event, arg) => {
+  showOpenFolderDialog((filePaths) => {
+
+    store.set("directory", filePaths[0]);
+    event.sender.send('select-directory-reply', filePaths[0]);
+
+  });
+});
+
+ipcMain.on('start-server', (event, arg) => {
+  store.set("port", arg);
+  opts.path = store.get("directory");
+  console.log(arg, opts.path)
+  try {
+    server.listen(arg, "localhost")
+    event.sender.send('start-server-reply', {});
+  } catch (e) {
+    event.sender.send('start-server-reply', { error: (e as Error).message ?? "Error starting server" });
+  }
+});
