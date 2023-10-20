@@ -1,0 +1,65 @@
+  label {
+    font-weight: bold;
+  }
+  
+  input[type="text"] {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  button {
+    padding: 0.5rem 1rem;
+    background-color: #454a50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+
+  button.primary {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  button:disabled {
+    background-color: #ccc;
+    color: #fff;
+    cursor: not-allowed;
+  }
+
+  #app {
+    padding: 2rem;
+  }
+
+  .title {
+    margin-bottom: 2rem;
+    color: var(--color-text-primary);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+
+  .container {
+    display: flex; 
+    flex-direction: column; 
+    gap: 1rem
+  }
+  
+  .section {
+    display: flex; 
+    flex-direction: column; 
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .section:hover {
+    background-color: #f5f5f5;
+  }

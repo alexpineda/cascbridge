@@ -4,8 +4,10 @@ process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 import os from 'os'
 import { join } from 'path'
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
-import { opts, server } from "../server"
+import { opts, server } from "./server"
 import { store } from './store'
+import { isValid } from './lib/files'
+import { createWindow, win } from './window'
 
 const isWin7 = os.release().startsWith('6.1')
 if (isWin7) app.disableHardwareAcceleration()
@@ -15,40 +17,23 @@ if (!app.requestSingleInstanceLock()) {
   process.exit(0)
 }
 
-let win: BrowserWindow | null = null
 
-async function createWindow() {
-  win = new BrowserWindow({
-    title: 'CASCBridge',
-    width: 400,
-    height: 400,
-    webPreferences: {
-      preload: join(process.env.DIST, 'preload/index.cjs'),
-      contextIsolation: false,
-      nodeIntegration: true,
-    },
-    resizable: true,
-  })
+app.whenReady().then(async () => {
 
-  win.webContents.on('did-finish-load', () => {
+  await createWindow();
+
+  win.webContents.on('did-finish-load', async () => {
     win?.webContents.send('store-loaded', {
-      directory: store.get("directory", ""),
+      folder: store.get("directory", ""),
       port: store.get("port", ""),
+      isValid: await isValid(store.get("directory", "" ) as string) 
     })
-  })
+  });
 
-  if (app.isPackaged) {
-    win.loadFile(join(process.env.DIST, 'renderer/index.html'))
-  } else {
-    win.loadURL(process.env.VITE_DEV_SERVER_URL)
-    // win.webContents.openDevTools({ mode: 'undocked' })
-  }
-}
+})
 
-app.whenReady().then(createWindow)
 
 app.on('window-all-closed', () => {
-  win = null
   if (process.platform !== 'darwin') {
     app.quit()
   }
@@ -71,8 +56,6 @@ app.on('activate', () => {
   }
 })
 
-
-
 const showOpenFolderDialog = (onOpen?: (filePaths: string[]) => void) =>
   dialog
     .showOpenDialog({
@@ -80,7 +63,6 @@ const showOpenFolderDialog = (onOpen?: (filePaths: string[]) => void) =>
     })
     .then(({ filePaths, canceled }) => {
       if (canceled) return;
-      onOpen && onOpen(filePaths);
       return filePaths;
     })
     .catch((err) => {
@@ -91,21 +73,21 @@ const showOpenFolderDialog = (onOpen?: (filePaths: string[]) => void) =>
       });
     });
 
-ipcMain.on('select-directory', (event, arg) => {
-  showOpenFolderDialog((filePaths) => {
+ipcMain.on('select-directory', async (event, arg) => {
+  const files = await showOpenFolderDialog();
+  
+  if (files?.length) {
+    store.set("directory", files[0]);
+    event.sender.send('select-directory-reply', { folder: files[0], isValid: await isValid(files[0]) });
+  }
 
-    store.set("directory", filePaths[0]);
-    event.sender.send('select-directory-reply', filePaths[0]);
-
-  });
 });
 
 ipcMain.on('start-server', (event, arg) => {
   store.set("port", arg);
-  opts.path = store.get("directory");
-  console.log(arg, opts.path)
+  opts.path = store.get("directory") as string;
   try {
-    server.listen(arg, "localhost")
+    server.listen(arg, "localhost");
     event.sender.send('start-server-reply', {});
   } catch (e) {
     event.sender.send('start-server-reply', { error: (e as Error).message ?? "Error starting server" });

@@ -7,6 +7,7 @@
   <link ref="stylesheet" href="normalize.min.css" />
   <link rel="stylesheet" href="open-props.min.css" />
   <link rel="stylesheet" href="buttons.min.css" />
+  <link rel="stylesheet" href="app.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono&display=swap" rel="stylesheet">
@@ -17,22 +18,29 @@
   </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-  <title>CASCBridge</title>
+  <title>Command Center App</title>
 </head>
 
 <body>
-  <div id="app">
-    <h1>CASCBridge</h1>
-    <div style="display: flex; flex-direction: column; gap: 1rem">
-      <div>
+  <div id="app"> 
+    <div class="title">
+      <img src="logo.png" alt="Black Sheep Wall logo" style="width:32px"/><h1 > Command Center for Black Sheep Wall</h1></div>
+    
+    <div class="container">
+
+      <div class="section">
         <label for="port">Port <input type="text" inputmode="numeric" id="port" value="8080" /></label>
+        <p>Enter the port number where the server will listen for connections. Default is 8080.</p>
       </div>
-      <div>
+      <div  class="section">
         <div><label>SCR Directory: <span id="directory"></span></label></div>
         <button id="select-directory">Select Directory</button>
+        <p id="select-dir-help">Select the directory where SCR files are located.</p>
+        <p id="error">Invalid directory</p>
       </div>
-      <div>
-        <button id="start-server">Start Server</button>
+      <div  class="section">
+        <button id="start-server" class="primary">Start</button>
+        <p id="server-log">Click to connect and start the server.</p>
       </div>
     </div>
   </div>
