@@ -23,7 +23,7 @@ export const foldersExist = async ( rootDirectory: string, directories: string[]
     return true;
 };
 
-export const isValid = async (scFolder: string)  => await foldersExist( scFolder, [
+export const looksLikeStarCraftDir = async (scFolder: string)  => await foldersExist( scFolder, [
     "Data",
     "locales",
   ] );

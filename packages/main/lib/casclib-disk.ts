@@ -1,7 +1,7 @@
 import { promises as fsPromises } from "fs";
 import path from "path";
 
-export const readCascFile = ( filePath: string, scPath: string ) => {
+export const readFile = ( filePath: string, scPath: string ) => {
     return fsPromises.readFile( path.join( scPath, filePath ) );
 };
 

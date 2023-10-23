@@ -11,6 +11,7 @@ const elements = {
 }
 
 elements.selectDirectory.onclick = () => ipcRenderer.send("select-directory");
+
 ipcRenderer.on("select-directory-reply", (_, { folder, isValid }) => {
   const isError = (!isValid && folder);
   elements.directory.textContent = folder;

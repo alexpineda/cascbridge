@@ -4,10 +4,11 @@ process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 import os from 'os'
 import { join } from 'path'
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
-import { opts, server } from "./server"
+import { server } from "./server"
 import { store } from './store'
-import { isValid } from './lib/files'
 import { createWindow, win } from './window'
+import { openCascStorage, setStoragePath } from './lib/casclib'
+import { looksLikeStarCraftDir } from './lib/files'
 
 const isWin7 = os.release().startsWith('6.1')
 if (isWin7) app.disableHardwareAcceleration()
@@ -26,7 +27,8 @@ app.whenReady().then(async () => {
     win?.webContents.send('store-loaded', {
       folder: store.get("directory", ""),
       port: store.get("port", ""),
-      isValid: await isValid(store.get("directory", "" ) as string) 
+      isValid: await looksLikeStarCraftDir(store.get("directory", "") as string)
+      
     })
   });
 
@@ -77,15 +79,23 @@ ipcMain.on('select-directory', async (event, arg) => {
   const files = await showOpenFolderDialog();
   
   if (files?.length) {
-    store.set("directory", files[0]);
-    event.sender.send('select-directory-reply', { folder: files[0], isValid: await isValid(files[0]) });
+    if (await looksLikeStarCraftDir(files[0])) {
+      store.set("directory", files[0]);
+      setStoragePath(files[0]);
+      const isValid = await openCascStorage();
+      event.sender.send('select-directory-reply', { folder: files[0], isValid } );
+    } else {
+      event.sender.send('select-directory-reply', { folder: files[0], isValid: false } );
+    }
   }
 
 });
 
 ipcMain.on('start-server', (event, arg) => {
   store.set("port", arg);
-  opts.path = store.get("directory") as string;
+
+  setStoragePath(store.get("directory") as string)
+  
   try {
     server.listen(arg, "localhost");
     event.sender.send('start-server-reply', {});
