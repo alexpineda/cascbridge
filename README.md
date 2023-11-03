@@ -1,11 +1,10 @@
-# Command Center App For Black Sheep Wall
+# CASCBridge - Starcraft Local Asset Server
 
 An http file server and UI for `CASC` archive data. Used for blacksheepwall.tv but can be used for any other prupose as well.
 
 [Download, extract, and run the application](https://github.com/imbateam-gg/cascbridge/releases/tag/v1.0.0-tr), assign the port, assign your Starcraft directory and press `Start`. 
 
-![image](https://user-images.githubusercontent.com/586716/192916637-3356b4a5-d224-45ad-b9e1-46dd70bedeec.png)
-
+![image](https://github.com/alexpineda/cascbridge/assets/586716/03f5b7ba-b183-426e-8cba-8f89ea3848e6)
 
 
 ## Javascript Usage Example
