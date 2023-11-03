@@ -2,7 +2,7 @@
 
 An http file server and UI for `CASC` archive data. Used for blacksheepwall.tv but can be used for any other prupose as well.
 
-[Download, extract, and run the application](https://github.com/imbateam-gg/cascbridge/releases/tag/v1.0.0-tr), assign the port, assign your Starcraft directory and press `Start`. 
+[Download, extract, and run the application](https://github.com/alexpineda/cascbridge/releases), assign the port, assign your Starcraft directory and press `Start`. 
 
 ![image](https://github.com/alexpineda/cascbridge/assets/586716/03f5b7ba-b183-426e-8cba-8f89ea3848e6)
 
