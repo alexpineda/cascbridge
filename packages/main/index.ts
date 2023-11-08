@@ -29,7 +29,8 @@ app.whenReady().then(async () => {
       port: store.get("port", ""),
       isValid: await looksLikeStarCraftDir(store.get("directory", "") as string)
       
-    })
+    });
+
   });
 
 })
@@ -82,8 +83,8 @@ ipcMain.on('select-directory', async (event, arg) => {
     if (await looksLikeStarCraftDir(files[0])) {
       store.set("directory", files[0]);
       setStoragePath(files[0]);
-      const isValid = await openCascStorage();
-      event.sender.send('select-directory-reply', { folder: files[0], isValid } );
+      await openCascStorage();
+      event.sender.send('select-directory-reply', { folder: files[0], isValid: true } );
     } else {
       event.sender.send('select-directory-reply', { folder: files[0], isValid: false } );
     }

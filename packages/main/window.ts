@@ -1,7 +1,5 @@
 import { app, BrowserWindow } from 'electron'
 import { join } from 'path'
-import { store } from './store'
-import { isValid } from './lib/files';
 
 export let win: BrowserWindow;
 
@@ -24,6 +22,7 @@ export async function createWindow() {
     if (app.isPackaged) {
       _win.loadFile(join(process.env.DIST, 'renderer/index.html'))
     } else {
+      console.log("dev-server-url", process.env.VITE_DEV_SERVER_URL)
       _win.loadURL(process.env.VITE_DEV_SERVER_URL)
       // _win.webContents.openDevTools({ mode: 'undocked' })
     }

@@ -12,6 +12,12 @@ server.use(function (_, res, next) {
 
 casclib.setStorageIsDisk(false);
 
+server.options("*", function (_, res) {
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Content-Range, Content-Disposition, Content-Description, Baggage, Sentry-Trace");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.sendStatus(200);
+  res.end();
+});
 server.head("*", async function (req, res) {
 
     try {
@@ -22,6 +28,7 @@ server.head("*", async function (req, res) {
         res.setHeader("Content-Length", fileSize.toString());
         res.setHeader("Content-Type", "application/octet-stream");
         res.setHeader("Accept-Ranges", "bytes");  // Optional, but useful if you support range requests
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Content-Range, Content-Disposition, Content-Description, Baggage, Sentry-Trace");
         res.status(200).end();  // Respond with 200 OK and no body
     } catch (e) {
         console.error(e);
@@ -32,6 +39,8 @@ server.head("*", async function (req, res) {
 });
 
 server.get("*", async function (req, res) {
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Content-Range, Content-Disposition, Content-Description, Baggage, Sentry-Trace");
+
   if (req.query["open"]) {
     try {
       await casclib.openCascStorage();
@@ -60,8 +69,6 @@ server.get("*", async function (req, res) {
       const start = parseInt(parts[0], 10);
       const fileData = await casclib.readCascFile(req.path.slice(1), true);
       const end = parts[1] ? parseInt(parts[1], 10) : fileData.byteLength - 1;
-
-      console.log("serving", start, end, fileData.byteLength)
 
       if (start >= fileData.byteLength) {
         console.log("Requested range not satisfiable");
